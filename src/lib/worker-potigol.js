@@ -7,7 +7,7 @@ ace.define('ace/worker/worker-potigol',["require","exports","module","ace/lib/oo
 
     var PotigolWorker = function(sender) {
         Mirror.call(this, sender);
-        this.setTimeout(200);
+        this.setTimeout(500);
         this.$dialect = null;
     };
 

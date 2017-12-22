@@ -4,9 +4,11 @@ var fs                  =   require('fs');
 var currentWindow       =   require('electron').remote.getCurrentWindow();
 var JavaScriptMode      =   ace.require('ace/mode/javascript').Mode;
 var PotigolMode         =   ace.require('ace/mode/potigol').Mode;
+var PhpMode             =   ace.require('ace/mode/php').Mode;
 var editorInstance      =   ace.edit('editor');
 
-editorInstance.session.setMode(new JavaScriptMode());
+editorInstance.getSession().setMode(new PhpMode());
+editorInstance.setTheme('ace/theme/twilight');
 
 var mainMenu = Menu.buildFromTemplate([
     {
@@ -24,11 +26,23 @@ var mainMenu = Menu.buildFromTemplate([
     },{
         label: 'Linguagens',
         submenu: [{
+            label: 'PHP',
+            click: function(){editorInstance.getSession().setMode(new PhpMode())}
+        },{
             label: 'Potigol',
-            click: setPotigol
+            click: function(){editorInstance.getSession().setMode(new PotigolMode())}
         },{
             label: 'JavaScript',
-            click: setJavaScript
+            click: function(){editorInstance.getSession().setMode(new JavaScriptMode())}
+        }]
+    },{
+        label: 'Temas',
+        submenu: [{
+            label: 'monokai',
+            click: function(){editorInstance.setTheme('ace/theme/monokai')}
+        },{
+            label: 'twilight',
+            click: function(){editorInstance.setTheme('ace/theme/twilight')}
         }]
     }
 ]);
@@ -45,14 +59,6 @@ function openHandler () {
     }
 }
 
-function setJavaScript(){
-    editorInstance.session.setMode(new JavaScriptMode());
-}
-
-function setPotigol(){
-    editorInstance.session.setMode(new PotigolMode());
-}
-
 function saveHandler () {
     var fileName = dialog.showSaveDialog(currentWindow);
     
@@ -60,5 +66,3 @@ function saveHandler () {
         fs.writeFile(fileName, editorInstance.getValue());
     }
 }
-
-editorInstance.setTheme('ace/theme/twilight');

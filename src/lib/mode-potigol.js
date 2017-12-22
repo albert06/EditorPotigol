@@ -762,7 +762,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.createWorker = function(session) {
-        var worker = new WorkerClient(["ace"], "ace/mode/worker-potigol", "PotigolWorker");
+        var worker = new WorkerClient(["ace"], "ace/mode/worker-potigol", "PotigolWorker","worker-potigol.js");
         worker.attachToDocument(session.getDocument());
 
         worker.on("annotate", function(results) {
@@ -911,6 +911,7 @@ define("ace/mode/potigol",["require","exports","module","ace/lib/oop","ace/mode/
 var oop = require("../lib/oop");
 var JavaScriptMode = require("./javascript").Mode;
 var PotigolHighlightRules = require("./potigol_highlight_rules").PotigolHighlightRules;
+var WorkerClient = require("../worker/worker_client").WorkerClient;
 
 var Mode = function() {
     JavaScriptMode.call(this);
@@ -922,7 +923,18 @@ oop.inherits(Mode, JavaScriptMode);
 (function() {
 
     this.createWorker = function(session) {
-        return null;
+        var worker = new WorkerClient(["ace"], "ace/mode/worker-potigol", "PotigolWorker");
+        worker.attachToDocument(session.getDocument());
+
+        worker.on("annotate", function(results) {
+            session.setAnnotations(results.data);
+        });
+
+        worker.on("terminate", function() {
+            session.clearAnnotations();
+        });
+
+        return worker;
     };
 
     this.$id = "ace/mode/potigol";
